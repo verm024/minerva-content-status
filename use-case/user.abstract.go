@@ -5,3 +5,7 @@ type RegisterNewUserStruct struct {
 	Email    string
 	Password string
 }
+type LoginParamStruct struct {
+	Username string
+	Password string
+}
