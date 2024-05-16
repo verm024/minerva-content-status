@@ -1,16 +1,17 @@
 package controllers
 
 import (
+	usecase "minerva-content-status/use-case"
+
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
 )
 
-type controller struct {
-	e *echo.Echo
-	db *gorm.DB
+type Controller struct {
+	e  *echo.Echo
+	uc *usecase.UseCase
 }
 
-func Initialize(e *echo.Echo, db *gorm.DB) *controller {
-	cont := controller{e, db}
+func Initialize(e *echo.Echo, uc *usecase.UseCase) *Controller {
+	cont := Controller{e, uc}
 	return &cont
 }
