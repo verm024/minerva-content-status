@@ -15,9 +15,9 @@ func main() {
 		log.Fatalf("Error loading .env file: %v", envLoadError)
 	}
 
-	db.Connect()
+	db, _ := db.Connect()
 
 	e := echo.New()
-	router.Initialize(e)
-	e.Logger.Fatal(e.Start(":1323"))
+	router.Initialize(e, db)
+	e.Logger.Fatal(e.Start(":5020"))
 }

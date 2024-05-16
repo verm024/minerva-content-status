@@ -16,7 +16,6 @@ func Connect() (*gorm.DB, error) {
 	dbTcp := os.Getenv("DB_TCP")
 
 	dsn := fmt.Sprintf("%s:%s%s/%s?charset=utf8mb4&parseTime=True&loc=Local", dbUser, dbPass, dbTcp, dbName)
-	fmt.Print(dsn)
 
 	db, err := gorm.Open(mysql.Open(dsn))
 
@@ -24,6 +23,7 @@ func Connect() (*gorm.DB, error) {
 		log.Fatalf("Connecting to database error: %v", err)
 		return nil, err
 	}
-	log.Fatalf("Success connecting to database")
+	log.Println("Success connecting to database")
+	db.AutoMigrate()
 	return db, nil
 }
