@@ -12,10 +12,11 @@ import (
 type createTokenParamStruct struct {
 	username string
 	email    string
+	user_id  uint64
 }
 
 func createToken(payload *createTokenParamStruct) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": payload.username, "email": payload.email, "exp": time.Now().Add(time.Hour * 24).Unix()})
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": payload.username, "email": payload.email, "exp": time.Now().Add(time.Hour * 24).Unix(), "user_id": payload.user_id})
 
 	tokenStr, jwtSignError := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 
@@ -35,7 +36,7 @@ func (uc *UseCase) RegisterNewUser(userData *dto.RegisterNewUserUseCaseStruct) (
 		return "", regError
 	}
 
-	tokenStr, jwtSignError := createToken(&createTokenParamStruct{username: registeredUser.Username, email: registeredUser.Email})
+	tokenStr, jwtSignError := createToken(&createTokenParamStruct{username: registeredUser.Username, email: registeredUser.Email, user_id: registeredUser.UserID})
 
 	if jwtSignError != nil {
 		return "", jwtSignError
@@ -58,7 +59,7 @@ func (uc *UseCase) Login(loginData *dto.LoginParamUseCaseStruct) (string, error)
 		return "", compareErr
 	}
 
-	tokenStr, jwtSignError := createToken(&createTokenParamStruct{username: oneUser.Username, email: oneUser.Email})
+	tokenStr, jwtSignError := createToken(&createTokenParamStruct{username: oneUser.Username, email: oneUser.Email, user_id: oneUser.UserID})
 
 	if jwtSignError != nil {
 		return "", jwtSignError

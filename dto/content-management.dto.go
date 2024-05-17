@@ -19,7 +19,7 @@ type GetContentManagementDashboardRequestQuery struct {
 }
 
 type CreateContentDTO struct {
-	Title       string
+	Title       string `validate:"required"`
 	Description string
 }
 
