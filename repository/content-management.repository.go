@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"minerva-content-status/dto"
 	"minerva-content-status/models"
 )
@@ -11,7 +12,7 @@ func (repo *Repository) GetContentManagementDashboard(filter *dto.GetContentMana
 	query := repo.db.Model(&contentManagement)
 
 	if filter.Search != "" {
-		query.Where("title LIKE %?%", filter.Search)
+		query.Where("title LIKE ?", fmt.Sprintf("%%%s%%", filter.Search))
 	}
 
 	if filter.Status != "" {
