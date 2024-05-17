@@ -1,9 +1,9 @@
 package router
 
 import (
+	"errors"
 	"fmt"
 	helper_response "minerva-content-status/helper"
-	"net/http"
 	"os"
 	"strings"
 
@@ -19,7 +19,7 @@ func (r *router) appMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 		authHeader := c.Request().Header.Get("Authorization")
 		if authHeader == "" || !strings.HasPrefix(authHeader, BEARER_PREFIX) {
-			return helper_response.ResponseHandler(c, map[string]interface{}{}, []error{echo.NewHTTPError(http.StatusUnauthorized, "Missing or invalid bearer token")})
+			return helper_response.ErrorResponseHandler(c, errors.New("bearer token not found in header"), 400)
 		}
 
 		claims := jwt.MapClaims{}
@@ -28,7 +28,7 @@ func (r *router) appMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return []byte(os.Getenv("JWT_SECRET")), nil
 		})
 		if parseJwtError != nil {
-			return helper_response.ResponseHandler(c, map[string]interface{}{}, []error{parseJwtError})
+			return helper_response.ErrorResponseHandler(c, parseJwtError, 400)
 		}
 
 		for key, val := range claims {

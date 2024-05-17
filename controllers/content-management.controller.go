@@ -9,46 +9,44 @@ import (
 )
 
 func (cont *Controller) GetContentManagementDashboard(c echo.Context) error {
-	var errors []error
 	reqQuery := dto.GetContentManagementDashboardRequestQuery{}
 	reqQueryErr := c.Bind(&reqQuery)
 
 	if reqQueryErr != nil {
-		errors = append(errors, reqQueryErr)
+		return helper_response.ErrorResponseHandler(c, reqQueryErr, 400)
 	}
 
 	validationErr := validators.ValidateRequest(reqQuery)
 
 	if validationErr != nil {
-		errors = append(errors, validationErr)
+		return helper_response.ErrorResponseHandler(c, validationErr, 400)
 	}
 
 	results, resultErr := cont.uc.GetContentManagementDashboard(&dto.GetContentManagementDashboardUseCaseFilter{Status: reqQuery.Status, SortBy: reqQuery.SortBy, Search: reqQuery.Search})
 
 	if resultErr != nil {
-		errors = append(errors, resultErr)
+		return helper_response.ErrorResponseHandler(c, resultErr, 400)
 	}
 
-	return helper_response.ResponseHandler(c, results, errors)
+	return helper_response.ResponseHandler(c, results)
 }
 
 func (cont *Controller) CreateContent(c echo.Context) error {
-	var errors []error
 
 	reqBody := dto.CreateContentRequestDTO{}
 	reqBindErr := c.Bind(&reqBody)
 
 	if reqBindErr != nil {
-		errors = append(errors, reqBindErr)
+		return helper_response.ErrorResponseHandler(c, reqBindErr, 400)
 	}
 
 	validateError := validators.ValidateRequest(reqBody)
 
 	if validateError != nil {
-		errors = append(errors, validateError)
+		return helper_response.ErrorResponseHandler(c, validateError, 400)
 	}
 
 	cont.uc.CreateContent(&dto.CreateContentDTO{Title: reqBody.Title, Description: reqBody.Description})
 
-	return helper_response.ResponseHandler(c, map[string]interface{}{}, errors)
+	return helper_response.ResponseHandler(c, map[string]interface{}{})
 }

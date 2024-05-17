@@ -16,47 +16,43 @@ func (cont *Controller) GetAllUsers(c echo.Context) error {
 }
 
 func (cont *Controller) RegisterNewUser(c echo.Context) error {
-	var errors []error
-
 	var reqBody = dto.RegisterNewUserRequestBody{}
 	reqBodyErr := c.Bind(&reqBody)
 	if reqBodyErr != nil {
-		errors = append(errors, reqBodyErr)
+		return helper_response.ErrorResponseHandler(c, reqBodyErr, 400)
 	}
 
 	validationErr := validators.ValidateRequest(reqBody)
 
 	if validationErr != nil {
-		errors = append(errors, validationErr)
+		return helper_response.ErrorResponseHandler(c, validationErr, 400)
 	}
 
 	token, registerError := cont.uc.RegisterNewUser(&dto.RegisterNewUserUseCaseStruct{Username: reqBody.Username, Email: reqBody.Email, Password: reqBody.Password})
 
 	if registerError != nil {
-		errors = append(errors, registerError)
+		return helper_response.ErrorResponseHandler(c, registerError, 400)
 	}
-	return helper_response.ResponseHandler(c, map[string]interface{}{"token": token}, errors)
+	return helper_response.ResponseHandler(c, map[string]interface{}{"token": token})
 }
 
 func (cont *Controller) Login(c echo.Context) error {
-	var errors []error
-
 	var reqBody = dto.LoginRequestBody{}
 	reqBodyErr := c.Bind(&reqBody)
 	if reqBodyErr != nil {
-		errors = append(errors, reqBodyErr)
+		return helper_response.ErrorResponseHandler(c, reqBodyErr, 400)
 	}
 
 	validationErr := validators.ValidateRequest(reqBody)
 
 	if validationErr != nil {
-		errors = append(errors, validationErr)
+		return helper_response.ErrorResponseHandler(c, validationErr, 400)
 	}
 
 	token, loginUseCaseError := cont.uc.Login(&dto.LoginParamUseCaseStruct{Username: reqBody.Username, Password: reqBody.Password})
 
 	if loginUseCaseError != nil {
-		errors = append(errors, loginUseCaseError)
+		return helper_response.ErrorResponseHandler(c, loginUseCaseError, 400)
 	}
-	return helper_response.ResponseHandler(c, map[string]interface{}{"token": token}, errors)
+	return helper_response.ResponseHandler(c, map[string]interface{}{"token": token})
 }

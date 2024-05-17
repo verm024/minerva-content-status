@@ -6,19 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ResponseHandler(c echo.Context, data interface{}, err []error) error {
-	if len(err) >= 1 {
-		firstErr := err[0]
-		// TODO: Handle status code
-		mapResponse := map[string]interface{}{
-			"status": "error",
-			"code":   http.StatusBadRequest,
-			"data":   map[string]interface{}{},
-			"error":  firstErr.Error(),
-		}
-
-		return echo.NewHTTPError(http.StatusBadRequest, mapResponse)
-	}
+func ResponseHandler(c echo.Context, data interface{}) error {
 
 	mapResponse := map[string]interface{}{
 		"status": "success",
@@ -27,4 +15,20 @@ func ResponseHandler(c echo.Context, data interface{}, err []error) error {
 	}
 
 	return c.JSON(http.StatusOK, mapResponse)
+}
+
+func ErrorResponseHandler(c echo.Context, err error, code int) error {
+
+	if code == 0 {
+		code = http.StatusInternalServerError
+	}
+
+	mapResponse := map[string]interface{}{
+		"status": "error",
+		"code":   code,
+		"data":   map[string]interface{}{},
+		"error":  err.Error(),
+	}
+
+	return echo.NewHTTPError(code, mapResponse)
 }
