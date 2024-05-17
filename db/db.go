@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"log"
+	"minerva-content-status/models"
 	"os"
 
 	"gorm.io/driver/mysql"
@@ -24,6 +25,6 @@ func Connect() (*gorm.DB, error) {
 		return nil, err
 	}
 	log.Println("Success connecting to database")
-	db.AutoMigrate()
+	db.AutoMigrate(&models.User{}, &models.ContentManagement{})
 	return db, nil
 }

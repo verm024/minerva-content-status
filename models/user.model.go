@@ -7,11 +7,10 @@ import (
 )
 
 type User struct {
-	gorm.Model
-	UserID    uint64    `gorm:"primaryKey;column:user_id; autoIncrement"`
-	Username  string    `gorm:"not null"`
+	UserID    uint64    `gorm:"primaryKey;column:user_id;autoIncrement"`
+	Username  string    `gorm:"unique; not null;index"`
 	Password  string    `gorm:"not null"`
-	Email     string    `gorm:"unique;not null"`
+	Email     string    `gorm:"unique;not null;index"`
 	CreatedAt time.Time `gorm:"not null"`
 	UpdatedAt time.Time `gorm:"not null"`
 	DeletedAt gorm.DeletedAt
