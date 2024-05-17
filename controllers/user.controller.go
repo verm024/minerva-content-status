@@ -40,19 +40,19 @@ func (cont *Controller) Login(c echo.Context) error {
 	var reqBody = dto.LoginRequestBody{}
 	reqBodyErr := c.Bind(&reqBody)
 	if reqBodyErr != nil {
-		return helper_response.ErrorResponseHandler(c, reqBodyErr, 400)
+		return helper_response.ErrorResponseHandler(c, reqBodyErr, http.StatusBadRequest)
 	}
 
 	validationErr := validators.ValidateRequest(reqBody)
 
 	if validationErr != nil {
-		return helper_response.ErrorResponseHandler(c, validationErr, 400)
+		return helper_response.ErrorResponseHandler(c, validationErr, http.StatusBadRequest)
 	}
 
 	token, loginUseCaseError := cont.uc.Login(&dto.LoginParamUseCaseStruct{Username: reqBody.Username, Password: reqBody.Password})
 
 	if loginUseCaseError != nil {
-		return helper_response.ErrorResponseHandler(c, loginUseCaseError, 400)
+		return helper_response.ErrorResponseHandler(c, loginUseCaseError, http.StatusBadRequest)
 	}
 	return helper_response.ResponseHandler(c, map[string]interface{}{"token": token})
 }

@@ -14,6 +14,7 @@ type User struct {
 	CreatedAt time.Time `gorm:"not null"`
 	UpdatedAt time.Time `gorm:"not null"`
 	DeletedAt gorm.DeletedAt
+	Role      string `gorm:"type:varchar(10);not null;check:role IN ('USR','SA');default:USR"`
 }
 
 func (User) TableName() string {

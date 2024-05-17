@@ -2,9 +2,10 @@ package router
 
 import (
 	"errors"
-	"fmt"
 	helper_response "minerva-content-status/helper"
+	"net/http"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/golang-jwt/jwt"
@@ -19,22 +20,39 @@ func (r *router) appMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 		authHeader := c.Request().Header.Get("Authorization")
 		if authHeader == "" || !strings.HasPrefix(authHeader, BEARER_PREFIX) {
-			return helper_response.ErrorResponseHandler(c, errors.New("bearer token not found in header"), 400)
+			return helper_response.ErrorResponseHandler(c, errors.New("bearer token not found in header"), http.StatusUnauthorized)
 		}
 
 		claims := jwt.MapClaims{}
 		tokenString := strings.TrimPrefix(authHeader, BEARER_PREFIX)
-		_, parseJwtError := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		token, parseJwtError := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 			return []byte(os.Getenv("JWT_SECRET")), nil
 		})
 		if parseJwtError != nil {
-			return helper_response.ErrorResponseHandler(c, parseJwtError, 400)
+			return helper_response.ErrorResponseHandler(c, parseJwtError, http.StatusUnauthorized)
 		}
 
-		for key, val := range claims {
-			fmt.Printf("Key: %v, value: %v\n", key, val)
+		claims, ok := token.Claims.(jwt.MapClaims)
+
+		if ok && token.Valid {
+			c.Set("locals", map[string]interface{}{"user_id": claims["user_id"], "username": claims["username"], "email": claims["email"], "role": claims["role"]})
+			return next(c)
 		}
-		return next(c)
+		return helper_response.ErrorResponseHandler(c, errors.New("invalid token"), http.StatusUnauthorized)
+	}
+}
+
+func (router) roleBasedRouteMiddleware(allowedRoles []string) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			locals := c.Get("locals").(map[string]interface{})
+			userRole := locals["role"].(string)
+
+			if slices.Contains(allowedRoles, userRole) {
+				return next(c)
+			}
+			return helper_response.ErrorResponseHandler(c, errors.New("not allowed to access this route"), http.StatusForbidden)
+		}
 	}
 }
 
