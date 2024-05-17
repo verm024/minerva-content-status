@@ -17,3 +17,13 @@ type GetContentManagementDashboardRequestQuery struct {
 	Search string `query:"search"`
 	Status string `query:"status" validate:"enum_validator=DRAFT WORKING_ON WAIT_PUBLISH PUBLISHED"`
 }
+
+type CreateContentDTO struct {
+	Title       string
+	Description string
+}
+
+type CreateContentRequestDTO struct {
+	Title       string `json:"title" validate:"required"`
+	Description string `json:"description"`
+}

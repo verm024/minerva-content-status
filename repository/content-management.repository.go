@@ -36,3 +36,18 @@ func (repo *Repository) GetContentManagementDashboard(filter *dto.GetContentMana
 
 	return contentManagement, nil
 }
+
+func (repo *Repository) CreateContent(contentData *dto.CreateContentDTO) (*models.ContentManagement, error) {
+	content := models.ContentManagement{
+		Title:       contentData.Title,
+		Description: contentData.Description,
+	}
+
+	result := repo.db.Create(&content)
+
+	if result.Error != nil {
+		return &models.ContentManagement{}, result.Error
+	}
+
+	return &content, nil
+}

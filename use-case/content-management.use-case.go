@@ -19,3 +19,8 @@ func (uc *UseCase) GetContentManagementDashboard(filter *dto.GetContentManagemen
 	}
 	return returnedData, err
 }
+
+func (uc *UseCase) CreateContent(contentData *dto.CreateContentDTO) error {
+	_, err := uc.repo.CreateContent(contentData)
+	return err
+}

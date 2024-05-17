@@ -31,3 +31,24 @@ func (cont *Controller) GetContentManagementDashboard(c echo.Context) error {
 
 	return helper_response.ResponseHandler(c, results, errors)
 }
+
+func (cont *Controller) CreateContent(c echo.Context) error {
+	var errors []error
+
+	reqBody := dto.CreateContentRequestDTO{}
+	reqBindErr := c.Bind(&reqBody)
+
+	if reqBindErr != nil {
+		errors = append(errors, reqBindErr)
+	}
+
+	validateError := validators.ValidateRequest(reqBody)
+
+	if validateError != nil {
+		errors = append(errors, validateError)
+	}
+
+	cont.uc.CreateContent(&dto.CreateContentDTO{Title: reqBody.Title, Description: reqBody.Description})
+
+	return helper_response.ResponseHandler(c, map[string]interface{}{}, errors)
+}
