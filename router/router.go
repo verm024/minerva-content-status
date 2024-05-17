@@ -25,5 +25,5 @@ func Initialize(e *echo.Echo, db *gorm.DB) {
 	r := router{e, db, cont, uc, repo}
 	r.initializePreMiddleware()
 	r.initializeUserRoute()
-
+	r.initializeContentManagementRoutes()
 }

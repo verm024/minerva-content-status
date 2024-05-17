@@ -4,7 +4,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func ValidateRequest[T RegisterNewUserRequestBody | LoginRequestBody](toBeValidated T) error {
+func ValidateRequest(toBeValidated interface{}) error {
 	v := validator.New()
 	validationErr := v.Struct(toBeValidated)
 

@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"fmt"
+	"minerva-content-status/dto"
 	helper_response "minerva-content-status/helper"
-	usecase "minerva-content-status/use-case"
 	"minerva-content-status/validators"
 	"net/http"
 
@@ -18,7 +18,7 @@ func (cont *Controller) GetAllUsers(c echo.Context) error {
 func (cont *Controller) RegisterNewUser(c echo.Context) error {
 	var errors []error
 
-	var reqBody = validators.RegisterNewUserRequestBody{}
+	var reqBody = dto.RegisterNewUserRequestBody{}
 	reqBodyErr := c.Bind(&reqBody)
 	if reqBodyErr != nil {
 		errors = append(errors, reqBodyErr)
@@ -30,7 +30,7 @@ func (cont *Controller) RegisterNewUser(c echo.Context) error {
 		errors = append(errors, validationErr)
 	}
 
-	token, registerError := cont.uc.RegisterNewUser(&usecase.RegisterNewUserStruct{Username: reqBody.Username, Email: reqBody.Email, Password: reqBody.Password})
+	token, registerError := cont.uc.RegisterNewUser(&dto.RegisterNewUserUseCaseStruct{Username: reqBody.Username, Email: reqBody.Email, Password: reqBody.Password})
 
 	if registerError != nil {
 		errors = append(errors, registerError)
@@ -41,7 +41,7 @@ func (cont *Controller) RegisterNewUser(c echo.Context) error {
 func (cont *Controller) Login(c echo.Context) error {
 	var errors []error
 
-	var reqBody = validators.LoginRequestBody{}
+	var reqBody = dto.LoginRequestBody{}
 	reqBodyErr := c.Bind(&reqBody)
 	if reqBodyErr != nil {
 		errors = append(errors, reqBodyErr)
@@ -53,7 +53,7 @@ func (cont *Controller) Login(c echo.Context) error {
 		errors = append(errors, validationErr)
 	}
 
-	token, loginUseCaseError := cont.uc.Login(&usecase.LoginParamStruct{Username: reqBody.Username, Password: reqBody.Password})
+	token, loginUseCaseError := cont.uc.Login(&dto.LoginParamUseCaseStruct{Username: reqBody.Username, Password: reqBody.Password})
 
 	if loginUseCaseError != nil {
 		errors = append(errors, loginUseCaseError)

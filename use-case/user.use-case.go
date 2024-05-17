@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"minerva-content-status/repository"
+	"minerva-content-status/dto"
 	"os"
 	"time"
 
@@ -22,14 +22,14 @@ func createToken(payload *createTokenParamStruct) (string, error) {
 	return tokenStr, jwtSignError
 }
 
-func (uc *UseCase) RegisterNewUser(userData *RegisterNewUserStruct) (string, error) {
+func (uc *UseCase) RegisterNewUser(userData *dto.RegisterNewUserUseCaseStruct) (string, error) {
 	hashedPass, hashErr := bcrypt.GenerateFromPassword([]byte(userData.Password), bcrypt.DefaultCost)
 
 	if hashErr != nil {
 		return "", hashErr
 	}
 
-	registeredUser, regError := uc.repo.RegisterNewUser(repository.RegisterNewUserStruct{Username: userData.Username, Email: userData.Email, Password: string(hashedPass)})
+	registeredUser, regError := uc.repo.RegisterNewUser(dto.RegisterNewUserRepoStruct{Username: userData.Username, Email: userData.Email, Password: string(hashedPass)})
 
 	if regError != nil {
 		return "", regError
@@ -43,7 +43,7 @@ func (uc *UseCase) RegisterNewUser(userData *RegisterNewUserStruct) (string, err
 	return tokenStr, nil
 }
 
-func (uc *UseCase) Login(loginData *LoginParamStruct) (string, error) {
+func (uc *UseCase) Login(loginData *dto.LoginParamUseCaseStruct) (string, error) {
 	oneUser, findUserErr := uc.repo.FindOneUserByUsername(loginData.Username)
 
 	if findUserErr != nil {
