@@ -3,13 +3,24 @@ package controllers
 import (
 	"minerva-content-status/dto"
 	helper_response "minerva-content-status/helper"
+	usecase "minerva-content-status/use-case"
 	"minerva-content-status/validators"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
-func (cont *Controller) GetContentManagementDashboard(c echo.Context) error {
+type ContentManagementController struct {
+	uc *usecase.ContentManagementUseCase
+}
+
+func InitializeContentManagementController(uc *usecase.ContentManagementUseCase) *ContentManagementController {
+	contentManagementController := ContentManagementController{uc}
+
+	return &contentManagementController
+}
+
+func (cont *ContentManagementController) GetContentManagementDashboard(c echo.Context) error {
 	reqQuery := dto.GetContentManagementDashboardRequestDTO{}
 	reqQueryErr := c.Bind(&reqQuery)
 
@@ -32,7 +43,7 @@ func (cont *Controller) GetContentManagementDashboard(c echo.Context) error {
 	return helper_response.ResponseHandler(c, results)
 }
 
-func (cont *Controller) CreateContent(c echo.Context) error {
+func (cont *ContentManagementController) CreateContent(c echo.Context) error {
 
 	reqBody := dto.CreateContentRequestDTO{}
 	reqBindErr := c.Bind(&reqBody)
@@ -56,7 +67,7 @@ func (cont *Controller) CreateContent(c echo.Context) error {
 	return helper_response.ResponseHandler(c, map[string]interface{}{})
 }
 
-func (cont *Controller) UpdateContent(c echo.Context) error {
+func (cont *ContentManagementController) UpdateContent(c echo.Context) error {
 	req := dto.UpdateContentRequestDTO{}
 	bindErr := c.Bind(&req)
 	if bindErr != nil {

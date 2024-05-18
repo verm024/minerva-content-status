@@ -2,12 +2,22 @@ package usecase
 
 import (
 	"minerva-content-status/dto"
+	"minerva-content-status/repository"
 	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
+
+type UserUseCase struct {
+	repo *repository.UserRepository
+}
+
+func InitializeUserUseCase(repo *repository.UserRepository) *UserUseCase {
+	uc := UserUseCase{repo}
+	return &uc
+}
 
 type createTokenParamStruct struct {
 	username string
@@ -24,7 +34,7 @@ func createToken(payload *createTokenParamStruct) (string, error) {
 	return tokenStr, jwtSignError
 }
 
-func (uc *UseCase) RegisterNewUser(userData *dto.RegisterNewUserDTO) (string, error) {
+func (uc *UserUseCase) RegisterNewUser(userData *dto.RegisterNewUserDTO) (string, error) {
 	hashedPass, hashErr := bcrypt.GenerateFromPassword([]byte(userData.Password), bcrypt.DefaultCost)
 
 	if hashErr != nil {
@@ -45,7 +55,7 @@ func (uc *UseCase) RegisterNewUser(userData *dto.RegisterNewUserDTO) (string, er
 	return tokenStr, nil
 }
 
-func (uc *UseCase) Login(loginData *dto.LoginDTO) (string, error) {
+func (uc *UserUseCase) Login(loginData *dto.LoginDTO) (string, error) {
 	oneUser, findUserErr := uc.repo.FindOneUserByUsername(loginData.Username)
 
 	if findUserErr != nil {

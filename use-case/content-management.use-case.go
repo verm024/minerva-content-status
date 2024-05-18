@@ -2,9 +2,20 @@ package usecase
 
 import (
 	"minerva-content-status/dto"
+	"minerva-content-status/repository"
 )
 
-func (uc *UseCase) GetContentManagementDashboard(filter *dto.GetContentManagementDashboardDTO) ([]map[string]interface{}, error) {
+type ContentManagementUseCase struct {
+	repo *repository.ContentManagementRepository
+}
+
+func InitializeContentManagementUseCase(repo *repository.ContentManagementRepository) *ContentManagementUseCase {
+	contentManagementUseCase := ContentManagementUseCase{repo}
+
+	return &contentManagementUseCase
+}
+
+func (uc *ContentManagementUseCase) GetContentManagementDashboard(filter *dto.GetContentManagementDashboardDTO) ([]map[string]interface{}, error) {
 	result, err := uc.repo.GetContentManagementDashboard(&dto.GetContentManagementDashboardDTO{Search: filter.Search, Status: filter.Status, SortBy: filter.SortBy})
 
 	if err != nil {
@@ -20,12 +31,12 @@ func (uc *UseCase) GetContentManagementDashboard(filter *dto.GetContentManagemen
 	return returnedData, err
 }
 
-func (uc *UseCase) CreateContent(contentData *dto.CreateContentDTO) error {
+func (uc *ContentManagementUseCase) CreateContent(contentData *dto.CreateContentDTO) error {
 	_, err := uc.repo.CreateContent(contentData)
 	return err
 }
 
-func (uc *UseCase) UpdateContent(contentData *dto.UpdateContentDTO) error {
+func (uc *ContentManagementUseCase) UpdateContent(contentData *dto.UpdateContentDTO) error {
 	_, err := uc.repo.UpdateContent(contentData)
 	return err
 }

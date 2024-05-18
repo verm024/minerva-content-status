@@ -15,7 +15,16 @@ import (
 	"github.com/unrolled/secure"
 )
 
-func (r *router) appMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+type customMiddleware struct {
+	e *echo.Echo
+}
+
+func initializeCustomMiddleware(e *echo.Echo) *customMiddleware {
+	cm := customMiddleware{e}
+	return &cm
+}
+
+func (customMiddleware) appMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		const BEARER_PREFIX string = "Bearer "
 
@@ -43,7 +52,7 @@ func (r *router) appMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-func (router) roleBasedRouteMiddleware(allowedRoles []string) echo.MiddlewareFunc {
+func (customMiddleware) roleBasedRouteMiddleware(allowedRoles []string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			locals := c.Get("locals").(map[string]interface{})
@@ -58,7 +67,7 @@ func (router) roleBasedRouteMiddleware(allowedRoles []string) echo.MiddlewareFun
 	}
 }
 
-func (r *router) initializePreMiddleware() {
+func (r *customMiddleware) initializePreMiddleware() {
 	r.e.Pre(middleware.RemoveTrailingSlash())
 
 	secureMiddleware := secure.New(secure.Options{FrameDeny: true, ContentTypeNosniff: true, BrowserXssFilter: true, STSIncludeSubdomains: true, STSSeconds: 31536000, STSPreload: true})

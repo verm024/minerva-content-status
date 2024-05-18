@@ -4,18 +4,28 @@ import (
 	"fmt"
 	"minerva-content-status/dto"
 	helper_response "minerva-content-status/helper"
+	usecase "minerva-content-status/use-case"
 	"minerva-content-status/validators"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
-func (cont *Controller) GetAllUsers(c echo.Context) error {
+type UserController struct {
+	uc *usecase.UserUseCase
+}
+
+func InitializeUserController(uc *usecase.UserUseCase) *UserController {
+	cont := UserController{uc}
+	return &cont
+}
+
+func (cont *UserController) GetAllUsers(c echo.Context) error {
 	fmt.Println("Executing Get All Users")
 	return c.String(http.StatusOK, "Executing Get All Users")
 }
 
-func (cont *Controller) RegisterNewUser(c echo.Context) error {
+func (cont *UserController) RegisterNewUser(c echo.Context) error {
 	var reqBody = dto.RegisterNewUserRequestDTO{}
 	reqBodyErr := c.Bind(&reqBody)
 	if reqBodyErr != nil {
@@ -36,7 +46,7 @@ func (cont *Controller) RegisterNewUser(c echo.Context) error {
 	return helper_response.ResponseHandler(c, map[string]interface{}{"token": token})
 }
 
-func (cont *Controller) Login(c echo.Context) error {
+func (cont *UserController) Login(c echo.Context) error {
 	var reqBody = dto.LoginRequestDTO{}
 	reqBodyErr := c.Bind(&reqBody)
 	if reqBodyErr != nil {

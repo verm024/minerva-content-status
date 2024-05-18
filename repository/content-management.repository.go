@@ -4,9 +4,21 @@ import (
 	"fmt"
 	"minerva-content-status/dto"
 	"minerva-content-status/models"
+
+	"gorm.io/gorm"
 )
 
-func (repo *Repository) GetContentManagementDashboard(filter *dto.GetContentManagementDashboardDTO) ([]models.ContentManagement, error) {
+type ContentManagementRepository struct {
+	db *gorm.DB
+}
+
+func InitializeContentManagementRepository(db *gorm.DB) *ContentManagementRepository {
+	contentManagementRepository := ContentManagementRepository{db}
+
+	return &contentManagementRepository
+}
+
+func (repo *ContentManagementRepository) GetContentManagementDashboard(filter *dto.GetContentManagementDashboardDTO) ([]models.ContentManagement, error) {
 	contentManagement := []models.ContentManagement{}
 
 	query := repo.db.Model(&contentManagement)
@@ -37,7 +49,7 @@ func (repo *Repository) GetContentManagementDashboard(filter *dto.GetContentMana
 	return contentManagement, nil
 }
 
-func (repo *Repository) CreateContent(contentData *dto.CreateContentDTO) (*models.ContentManagement, error) {
+func (repo *ContentManagementRepository) CreateContent(contentData *dto.CreateContentDTO) (*models.ContentManagement, error) {
 	content := models.ContentManagement{
 		Title:       contentData.Title,
 		Description: contentData.Description,
@@ -52,7 +64,7 @@ func (repo *Repository) CreateContent(contentData *dto.CreateContentDTO) (*model
 	return &content, nil
 }
 
-func (repo *Repository) UpdateContent(contentData *dto.UpdateContentDTO) (*models.ContentManagement, error) {
+func (repo *ContentManagementRepository) UpdateContent(contentData *dto.UpdateContentDTO) (*models.ContentManagement, error) {
 	contentManagement := models.ContentManagement{}
 
 	result := repo.db.Model(&contentManagement).Where("content_management_id = ?", contentData.ContentManagementId).First(&contentManagement).Updates(models.ContentManagement{Title: contentData.Title, Description: contentData.Description})
