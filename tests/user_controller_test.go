@@ -48,7 +48,7 @@ func TestRegisterNewUser(t *testing.T) {
 	decoded, _ := helper_response.DecodeResponseJson(rec.Body.String(), &responseData)
 
 	assert.Equal(t, token, responseData.Token)
-	assert.Equal(t, http.StatusOK, int(decoded.Code))
+	assert.EqualValues(t, http.StatusOK, decoded.Code)
 	mockUserUseCase.AssertExpectations(t)
 }
 
@@ -72,6 +72,6 @@ func TestLogin(t *testing.T) {
 	decoded, _ := helper_response.DecodeResponseJson(rec.Body.String(), &responseData)
 
 	assert.Equal(t, token, responseData.Token)
-	assert.Equal(t, http.StatusOK, int(decoded.Code))
+	assert.EqualValues(t, http.StatusOK, decoded.Code)
 	mockUserUseCase.AssertExpectations(t)
 }

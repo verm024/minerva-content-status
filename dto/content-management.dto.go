@@ -13,6 +13,14 @@ type GetContentManagementDashboardRequestDTO struct {
 	Status string `query:"status" validate:"enum_validator=DRAFT WORKING_ON WAIT_PUBLISH PUBLISHED"`
 }
 
+type GetContentManagementDashboardResponseDTO struct {
+	ContentList []map[string]interface{} `json:"content_list"`
+}
+
+type GetContentManagementDashboardUseCaseOutputDTO struct {
+	ContentList []map[string]interface{}
+}
+
 // * END GET CONTENT MANAGEMENT DASHBOARD DTO
 
 // * START CREATE CONTENT DTO

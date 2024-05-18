@@ -11,10 +11,10 @@ import (
 )
 
 type ContentManagementController struct {
-	uc *usecase.ContentManagementUseCase
+	uc usecase.ContentManagementUseCaseInterface
 }
 
-func InitializeContentManagementController(uc *usecase.ContentManagementUseCase) *ContentManagementController {
+func InitializeContentManagementController(uc usecase.ContentManagementUseCaseInterface) *ContentManagementController {
 	contentManagementController := ContentManagementController{uc}
 
 	return &contentManagementController
@@ -33,14 +33,13 @@ func (cont *ContentManagementController) GetContentManagementDashboard(c echo.Co
 	if validationErr != nil {
 		return helper_response.ErrorResponseHandler(c, validationErr, http.StatusBadRequest)
 	}
-
 	results, resultErr := cont.uc.GetContentManagementDashboard(&dto.GetContentManagementDashboardDTO{Status: reqQuery.Status, SortBy: reqQuery.SortBy, Search: reqQuery.Search})
 
 	if resultErr != nil {
 		return helper_response.ErrorResponseHandler(c, resultErr, http.StatusBadRequest)
 	}
 
-	return helper_response.ResponseHandler(c, results)
+	return helper_response.ResponseHandler(c, dto.GetContentManagementDashboardResponseDTO{ContentList: results.ContentList})
 }
 
 func (cont *ContentManagementController) CreateContent(c echo.Context) error {
