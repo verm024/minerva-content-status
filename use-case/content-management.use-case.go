@@ -4,8 +4,8 @@ import (
 	"minerva-content-status/dto"
 )
 
-func (uc *UseCase) GetContentManagementDashboard(filter *dto.GetContentManagementDashboardUseCaseFilter) ([]map[string]interface{}, error) {
-	result, err := uc.repo.GetContentManagementDashboard(&dto.GetContentManagementDashboardRepoFilter{Search: filter.Search, Status: filter.Status, SortBy: filter.SortBy})
+func (uc *UseCase) GetContentManagementDashboard(filter *dto.GetContentManagementDashboardDTO) ([]map[string]interface{}, error) {
+	result, err := uc.repo.GetContentManagementDashboard(&dto.GetContentManagementDashboardDTO{Search: filter.Search, Status: filter.Status, SortBy: filter.SortBy})
 
 	if err != nil {
 		return make([]map[string]interface{}, 0), err

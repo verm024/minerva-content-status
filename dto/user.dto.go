@@ -1,28 +1,27 @@
 package dto
 
-type RegisterNewUserRequestBody struct {
+// * START REGISTER DTO
+type RegisterNewUserRequestDTO struct {
 	Username string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
 	Email    string `json:"email" validate:"required,email"`
 }
 
-type LoginRequestBody struct {
+type RegisterNewUserDTO struct {
+	Username string
+	Email    string
+	Password string
+}
+// * END REGISTER DTO
+
+// * START LOGIN DTO
+type LoginRequestDTO struct {
 	Username string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
 }
-
-type RegisterNewUserRepoStruct struct {
+type LoginDTO struct {
 	Username string
-	Email    string
 	Password string
 }
 
-type RegisterNewUserUseCaseStruct struct {
-	Username string
-	Email    string
-	Password string
-}
-type LoginParamUseCaseStruct struct {
-	Username string
-	Password string
-}
+// * END LOGIN DTO

@@ -6,7 +6,7 @@ import (
 	"minerva-content-status/models"
 )
 
-func (repo *Repository) GetContentManagementDashboard(filter *dto.GetContentManagementDashboardRepoFilter) ([]models.ContentManagement, error) {
+func (repo *Repository) GetContentManagementDashboard(filter *dto.GetContentManagementDashboardDTO) ([]models.ContentManagement, error) {
 	contentManagement := []models.ContentManagement{}
 
 	query := repo.db.Model(&contentManagement)

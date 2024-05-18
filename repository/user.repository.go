@@ -5,7 +5,7 @@ import (
 	"minerva-content-status/models"
 )
 
-func (repo *Repository) RegisterNewUser(userData dto.RegisterNewUserRepoStruct) (*models.User, error) {
+func (repo *Repository) RegisterNewUser(userData dto.RegisterNewUserDTO) (*models.User, error) {
 	user := models.User{
 		Username: userData.Username,
 		Password: userData.Password,

@@ -10,7 +10,7 @@ import (
 )
 
 func (cont *Controller) GetContentManagementDashboard(c echo.Context) error {
-	reqQuery := dto.GetContentManagementDashboardRequestQuery{}
+	reqQuery := dto.GetContentManagementDashboardRequestDTO{}
 	reqQueryErr := c.Bind(&reqQuery)
 
 	if reqQueryErr != nil {
@@ -23,7 +23,7 @@ func (cont *Controller) GetContentManagementDashboard(c echo.Context) error {
 		return helper_response.ErrorResponseHandler(c, validationErr, http.StatusBadRequest)
 	}
 
-	results, resultErr := cont.uc.GetContentManagementDashboard(&dto.GetContentManagementDashboardUseCaseFilter{Status: reqQuery.Status, SortBy: reqQuery.SortBy, Search: reqQuery.Search})
+	results, resultErr := cont.uc.GetContentManagementDashboard(&dto.GetContentManagementDashboardDTO{Status: reqQuery.Status, SortBy: reqQuery.SortBy, Search: reqQuery.Search})
 
 	if resultErr != nil {
 		return helper_response.ErrorResponseHandler(c, resultErr, http.StatusBadRequest)

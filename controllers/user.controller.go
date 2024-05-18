@@ -16,7 +16,7 @@ func (cont *Controller) GetAllUsers(c echo.Context) error {
 }
 
 func (cont *Controller) RegisterNewUser(c echo.Context) error {
-	var reqBody = dto.RegisterNewUserRequestBody{}
+	var reqBody = dto.RegisterNewUserRequestDTO{}
 	reqBodyErr := c.Bind(&reqBody)
 	if reqBodyErr != nil {
 		return helper_response.ErrorResponseHandler(c, reqBodyErr, 400)
@@ -28,7 +28,7 @@ func (cont *Controller) RegisterNewUser(c echo.Context) error {
 		return helper_response.ErrorResponseHandler(c, validationErr, 400)
 	}
 
-	token, registerError := cont.uc.RegisterNewUser(&dto.RegisterNewUserUseCaseStruct{Username: reqBody.Username, Email: reqBody.Email, Password: reqBody.Password})
+	token, registerError := cont.uc.RegisterNewUser(&dto.RegisterNewUserDTO{Username: reqBody.Username, Email: reqBody.Email, Password: reqBody.Password})
 
 	if registerError != nil {
 		return helper_response.ErrorResponseHandler(c, registerError, 400)
@@ -37,7 +37,7 @@ func (cont *Controller) RegisterNewUser(c echo.Context) error {
 }
 
 func (cont *Controller) Login(c echo.Context) error {
-	var reqBody = dto.LoginRequestBody{}
+	var reqBody = dto.LoginRequestDTO{}
 	reqBodyErr := c.Bind(&reqBody)
 	if reqBodyErr != nil {
 		return helper_response.ErrorResponseHandler(c, reqBodyErr, http.StatusBadRequest)
@@ -49,7 +49,7 @@ func (cont *Controller) Login(c echo.Context) error {
 		return helper_response.ErrorResponseHandler(c, validationErr, http.StatusBadRequest)
 	}
 
-	token, loginUseCaseError := cont.uc.Login(&dto.LoginParamUseCaseStruct{Username: reqBody.Username, Password: reqBody.Password})
+	token, loginUseCaseError := cont.uc.Login(&dto.LoginDTO{Username: reqBody.Username, Password: reqBody.Password})
 
 	if loginUseCaseError != nil {
 		return helper_response.ErrorResponseHandler(c, loginUseCaseError, http.StatusBadRequest)
