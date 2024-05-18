@@ -10,11 +10,16 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type UserUseCaseInterface interface {
+	RegisterNewUser(param *dto.RegisterNewUserDTO) (string, error)
+	Login(loginData *dto.LoginDTO) (string, error)
+}
+
 type UserUseCase struct {
 	repo *repository.UserRepository
 }
 
-func InitializeUserUseCase(repo *repository.UserRepository) *UserUseCase {
+func InitializeUserUseCase(repo *repository.UserRepository) UserUseCaseInterface {
 	uc := UserUseCase{repo}
 	return &uc
 }

@@ -1,6 +1,8 @@
 package helper_response
 
 import (
+	"encoding/json"
+	"minerva-content-status/dto"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -31,4 +33,19 @@ func ErrorResponseHandler(c echo.Context, err error, code int) error {
 	}
 
 	return echo.NewHTTPError(code, mapResponse)
+}
+
+func DecodeResponseJson(jsonStr string, dataTarget interface{}) (*dto.BaseResponse, error) {
+	responseObj := new(dto.BaseResponse)
+	err := json.Unmarshal([]byte(jsonStr), &responseObj)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if responseObj.Data != nil {
+		json.Unmarshal(responseObj.Data, &dataTarget)
+	}
+
+	return responseObj, nil
 }

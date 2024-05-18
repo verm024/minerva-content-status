@@ -20,7 +20,6 @@ func (r *userRouter) initialize() {
 	cont := controllers.InitializeUserController(uc)
 
 	userRouter := r.e.Group("/user")
-	userRouter.GET("", cont.GetAllUsers)
 	userRouter.POST("", cont.RegisterNewUser)
 	userRouter.POST("/login", cont.Login)
 }

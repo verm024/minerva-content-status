@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"minerva-content-status/dto"
 	helper_response "minerva-content-status/helper"
 	usecase "minerva-content-status/use-case"
@@ -12,17 +11,12 @@ import (
 )
 
 type UserController struct {
-	uc *usecase.UserUseCase
+	uc usecase.UserUseCaseInterface
 }
 
-func InitializeUserController(uc *usecase.UserUseCase) *UserController {
+func InitializeUserController(uc usecase.UserUseCaseInterface) *UserController {
 	cont := UserController{uc}
 	return &cont
-}
-
-func (cont *UserController) GetAllUsers(c echo.Context) error {
-	fmt.Println("Executing Get All Users")
-	return c.String(http.StatusOK, "Executing Get All Users")
 }
 
 func (cont *UserController) RegisterNewUser(c echo.Context) error {
