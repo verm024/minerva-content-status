@@ -24,3 +24,8 @@ func (uc *UseCase) CreateContent(contentData *dto.CreateContentDTO) error {
 	_, err := uc.repo.CreateContent(contentData)
 	return err
 }
+
+func (uc *UseCase) UpdateContent(contentData *dto.UpdateContentDTO) error {
+	_, err := uc.repo.UpdateContent(contentData)
+	return err
+}

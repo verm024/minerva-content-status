@@ -47,7 +47,33 @@ func (cont *Controller) CreateContent(c echo.Context) error {
 		return helper_response.ErrorResponseHandler(c, validateError, http.StatusBadRequest)
 	}
 
-	cont.uc.CreateContent(&dto.CreateContentDTO{Title: reqBody.Title, Description: reqBody.Description})
+	err := cont.uc.CreateContent(&dto.CreateContentDTO{Title: reqBody.Title, Description: reqBody.Description})
+
+	if err != nil {
+		return helper_response.ErrorResponseHandler(c, err, http.StatusBadRequest)
+	}
+
+	return helper_response.ResponseHandler(c, map[string]interface{}{})
+}
+
+func (cont *Controller) UpdateContent(c echo.Context) error {
+	req := dto.UpdateContentRequestDTO{}
+	bindErr := c.Bind(&req)
+	if bindErr != nil {
+		return helper_response.ErrorResponseHandler(c, bindErr, http.StatusBadRequest)
+	}
+
+	validationErr := validators.ValidateRequest(req)
+
+	if validationErr != nil {
+		return helper_response.ErrorResponseHandler(c, validationErr, http.StatusBadRequest)
+	}
+
+	err := cont.uc.UpdateContent(&dto.UpdateContentDTO{ContentManagementId: req.ContentManagementId, Title: req.Title, Description: req.Description})
+
+	if err != nil {
+		return helper_response.ErrorResponseHandler(c, err, http.StatusBadRequest)
+	}
 
 	return helper_response.ResponseHandler(c, map[string]interface{}{})
 }

@@ -2,6 +2,7 @@ package router
 
 import (
 	"errors"
+	"fmt"
 	helper_response "minerva-content-status/helper"
 	"net/http"
 	"os"
@@ -47,6 +48,7 @@ func (router) roleBasedRouteMiddleware(allowedRoles []string) echo.MiddlewareFun
 		return func(c echo.Context) error {
 			locals := c.Get("locals").(map[string]interface{})
 			userRole := locals["role"].(string)
+			fmt.Print(userRole)
 
 			if slices.Contains(allowedRoles, userRole) {
 				return next(c)

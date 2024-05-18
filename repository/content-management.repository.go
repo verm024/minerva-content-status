@@ -51,3 +51,15 @@ func (repo *Repository) CreateContent(contentData *dto.CreateContentDTO) (*model
 
 	return &content, nil
 }
+
+func (repo *Repository) UpdateContent(contentData *dto.UpdateContentDTO) (*models.ContentManagement, error) {
+	contentManagement := models.ContentManagement{}
+
+	result := repo.db.Model(&contentManagement).Where("content_management_id = ?", contentData.ContentManagementId).First(&contentManagement).Updates(models.ContentManagement{Title: contentData.Title, Description: contentData.Description})
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &contentManagement, nil
+}

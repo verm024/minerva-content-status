@@ -27,3 +27,15 @@ type CreateContentRequestDTO struct {
 	Title       string `json:"title" validate:"required"`
 	Description string `json:"description"`
 }
+
+type UpdateContentDTO struct {
+	ContentManagementId uint64
+	Title               string
+	Description         string
+}
+
+type UpdateContentRequestDTO struct {
+	ContentManagementId uint64 `param:"content_management_id" validate:"required"`
+	Title               string `json:"title" validate:"required"`
+	Description         string `json:"description"`
+}
