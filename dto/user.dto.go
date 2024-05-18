@@ -16,6 +16,7 @@ type RegisterNewUserDTO struct {
 type RegisterNewUserResponseDTO struct {
 	Token string `json:"token"`
 }
+
 // * END REGISTER DTO
 
 // * START LOGIN DTO
@@ -26,6 +27,10 @@ type LoginRequestDTO struct {
 type LoginDTO struct {
 	Username string
 	Password string
+}
+
+type LoginResponseDTO struct {
+	Token string `json:"token"`
 }
 
 // * END LOGIN DTO
