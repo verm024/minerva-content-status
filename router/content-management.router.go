@@ -26,4 +26,6 @@ func (r *contentManagementRouter) initialize() {
 	contentManagementRouter.GET("", cont.GetContentManagementDashboard, cm.roleBasedRouteMiddleware([]string{"SA"}))
 	contentManagementRouter.POST("", cont.CreateContent)
 	contentManagementRouter.PUT("/:content_management_id", cont.UpdateContent)
+	contentManagementRouter.DELETE("/:content_management_id", cont.DeleteContent)
+	contentManagementRouter.PUT("/:content_management_id/publish", cont.PublishAndUpdateLink)
 }

@@ -87,3 +87,49 @@ func (cont *ContentManagementController) UpdateContent(c echo.Context) error {
 
 	return helper_response.ResponseHandler(c, map[string]interface{}{})
 }
+
+func (cont *ContentManagementController) DeleteContent(c echo.Context) error {
+	req := dto.DeleteCMRequestDTO{}
+	bindErr := c.Bind(&req)
+
+	if bindErr != nil {
+		return helper_response.ErrorResponseHandler(c, bindErr, http.StatusBadRequest)
+	}
+
+	validateErr := validators.ValidateRequest(req)
+
+	if validateErr != nil {
+		return helper_response.ErrorResponseHandler(c, validateErr, http.StatusBadRequest)
+	}
+
+	err := cont.uc.DeleteContent(req.ContentManagementId)
+
+	if err != nil {
+		return helper_response.ErrorResponseHandler(c, err, http.StatusBadRequest)
+	}
+
+	return helper_response.ResponseHandler(c, map[string]interface{}{})
+}
+
+func (cont *ContentManagementController) PublishAndUpdateLink(c echo.Context) error {
+	req := dto.PublishAndUpdateLinkRequestDTO{}
+	bindErr := c.Bind(&req)
+
+	if bindErr != nil {
+		return helper_response.ErrorResponseHandler(c, bindErr, http.StatusBadRequest)
+	}
+
+	validateErr := validators.ValidateRequest(req)
+
+	if validateErr != nil {
+		return helper_response.ErrorResponseHandler(c, validateErr, http.StatusBadRequest)
+	}
+
+	err := cont.uc.PublishAndUpdateLink(&dto.PublishAndUpdateLinkUseCaseInputDTO{TiktokLink: req.TiktokLink, YoutubeLink: req.YoutubeLink, IgLink: req.IgLink, ContentManagementId: req.ContentManagementId})
+
+	if err != nil {
+		return helper_response.ErrorResponseHandler(c, err, http.StatusBadRequest)
+	}
+
+	return helper_response.ResponseHandler(c, map[string]interface{}{})
+}

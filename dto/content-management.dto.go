@@ -50,3 +50,47 @@ type UpdateContentRequestDTO struct {
 }
 
 // * END UPDATE CONTENT DTO
+
+// * START UPDATE LINK DTO
+type UpdateLinkRepoInputDTO struct {
+	ContentManagementId uint64
+	TiktokLink          string
+	YoutubeLink         string
+	IgLink              string
+}
+
+// * END UPDATE LINK DTO
+
+// * START PUBLISH AND UPDATE LINK DTO
+
+type PublishAndUpdateLinkUseCaseInputDTO struct {
+	ContentManagementId uint64
+	TiktokLink          string
+	YoutubeLink         string
+	IgLink              string
+}
+
+type PublishAndUpdateLinkRequestDTO struct {
+	ContentManagementId uint64 `param:"content_management_id" validate:"required"`
+	TiktokLink          string `json:"tiktok_link"`
+	YoutubeLink         string `json:"youtube_link"`
+	IgLink              string `json:"ig_link"`
+}
+
+// * END PUBLISH AND UPDATE LINK DTO
+
+// * START UPDATE STATUS DTO
+
+type UpdateStatusRepoInputDTO struct {
+	ContentManagementId uint64
+	Status              string
+}
+
+// * END UPDATE STATUS DTO
+
+// * START DELETE CONTENT
+type DeleteCMRequestDTO struct {
+	ContentManagementId uint64 `param:"content_management_id" validate:"required"`
+}
+
+// * END DELETE CONTENT

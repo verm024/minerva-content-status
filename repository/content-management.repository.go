@@ -8,8 +8,17 @@ import (
 	"gorm.io/gorm"
 )
 
+type ContentManagementRepoInterface interface {
+	GetContentManagementDashboard(filter *dto.GetContentManagementDashboardDTO) ([]models.ContentManagement, error)
+	CreateContent(contentData *dto.CreateContentDTO) (*models.ContentManagement, error)
+	UpdateContent(contentData *dto.UpdateContentDTO) (*models.ContentManagement, error)
+	DeleteContent(contentId uint64) error
+	UpdateLink(data *dto.UpdateLinkRepoInputDTO) error
+	UpdateStatus(data *dto.UpdateStatusRepoInputDTO) error
+}
+
 type ContentManagementRepository struct {
-	db *gorm.DB
+	Db *gorm.DB
 }
 
 func InitializeContentManagementRepository(db *gorm.DB) *ContentManagementRepository {
@@ -21,7 +30,7 @@ func InitializeContentManagementRepository(db *gorm.DB) *ContentManagementReposi
 func (repo *ContentManagementRepository) GetContentManagementDashboard(filter *dto.GetContentManagementDashboardDTO) ([]models.ContentManagement, error) {
 	contentManagement := []models.ContentManagement{}
 
-	query := repo.db.Model(&contentManagement)
+	query := repo.Db.Model(&contentManagement)
 
 	if filter.Search != "" {
 		query.Where("title LIKE ?", fmt.Sprintf("%%%s%%", filter.Search))
@@ -55,7 +64,7 @@ func (repo *ContentManagementRepository) CreateContent(contentData *dto.CreateCo
 		Description: contentData.Description,
 	}
 
-	result := repo.db.Create(&content)
+	result := repo.Db.Create(&content)
 
 	if result.Error != nil {
 		return &models.ContentManagement{}, result.Error
@@ -67,11 +76,49 @@ func (repo *ContentManagementRepository) CreateContent(contentData *dto.CreateCo
 func (repo *ContentManagementRepository) UpdateContent(contentData *dto.UpdateContentDTO) (*models.ContentManagement, error) {
 	contentManagement := models.ContentManagement{}
 
-	result := repo.db.Model(&contentManagement).Where("content_management_id = ?", contentData.ContentManagementId).First(&contentManagement).Updates(models.ContentManagement{Title: contentData.Title, Description: contentData.Description})
+	result := repo.Db.Model(&contentManagement).Where("content_management_id = ?", contentData.ContentManagementId).First(&contentManagement).Updates(models.ContentManagement{Title: contentData.Title, Description: contentData.Description})
 
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
 	return &contentManagement, nil
+}
+
+func (repo *ContentManagementRepository) DeleteContent(contentId uint64) error {
+	contentManagement := models.ContentManagement{}
+	result := repo.Db.Model(&contentManagement).Where("content_management_id = ?", contentId).Delete(&contentManagement)
+
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (repo *ContentManagementRepository) UpdateLink(data *dto.UpdateLinkRepoInputDTO) error {
+	contentManagement := models.ContentManagement{}
+	result := repo.Db.Model(&contentManagement).Where("content_management_id = ?", data.ContentManagementId).Updates(models.ContentManagement{TiktokLink: data.TiktokLink, YoutubeLink: data.YoutubeLink, IgLink: data.IgLink})
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (repo *ContentManagementRepository) UpdateStatus(data *dto.UpdateStatusRepoInputDTO) error {
+	contentManagement := models.ContentManagement{}
+	result := repo.Db.Model(&contentManagement).Where("content_management_id = ?", data.ContentManagementId).Updates(models.ContentManagement{Status: data.Status})
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (repo *ContentManagementRepository) FindOneById(contentId uint64) (*models.ContentManagement, error) {
+	cm := models.ContentManagement{}
+	result := repo.Db.Model(&cm).Where("content_management_id = ?", contentId).Find(&cm)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &cm, nil
 }

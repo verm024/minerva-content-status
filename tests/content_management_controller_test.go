@@ -33,6 +33,18 @@ func (m *MockContentManagementUseCase) UpdateContent(contentData *dto.UpdateCont
 	return args.Error(0)
 }
 
+func (m *MockContentManagementUseCase) DeleteContent(contentId uint64) error {
+
+	args := m.Called(contentId)
+	return args.Error(0)
+}
+
+func (m *MockContentManagementUseCase) PublishAndUpdateLink(data *dto.PublishAndUpdateLinkUseCaseInputDTO) error {
+
+	args := m.Called(data)
+	return args.Error(0)
+}
+
 func TestGetContentManagementDashboard(t *testing.T) {
 	const ENDPOINT_PATH string = "/content-management"
 	e := echo.New()
