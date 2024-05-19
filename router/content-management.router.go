@@ -16,7 +16,7 @@ type contentManagementRouter struct {
 
 func (r *contentManagementRouter) initialize() {
 	repo := repository.InitializeContentManagementRepository(r.db)
-	uc := usecase.InitializeContentManagementUseCase(repo)
+	uc := usecase.InitializeContentManagementUseCase(repo, r.db)
 	cont := controllers.InitializeContentManagementController(uc)
 
 	cm := initializeCustomMiddleware(r.e)

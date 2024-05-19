@@ -15,6 +15,7 @@ type ContentManagementRepoInterface interface {
 	DeleteContent(contentId uint64) error
 	UpdateLink(data *dto.UpdateLinkRepoInputDTO) error
 	UpdateStatus(data *dto.UpdateStatusRepoInputDTO) error
+	FindOneById(contentId uint64) (*models.ContentManagement, error)
 }
 
 type ContentManagementRepository struct {

@@ -5,6 +5,8 @@ import (
 	"minerva-content-status/dto"
 	"minerva-content-status/repository"
 	"net/http"
+
+	"gorm.io/gorm"
 )
 
 type ContentManagementUseCaseInterface interface {
@@ -17,11 +19,12 @@ type ContentManagementUseCaseInterface interface {
 }
 
 type ContentManagementUseCase struct {
-	repo *repository.ContentManagementRepository
+	repo repository.ContentManagementRepoInterface
+	db   *gorm.DB
 }
 
-func InitializeContentManagementUseCase(repo *repository.ContentManagementRepository) *ContentManagementUseCase {
-	contentManagementUseCase := ContentManagementUseCase{repo}
+func InitializeContentManagementUseCase(repo repository.ContentManagementRepoInterface, db *gorm.DB) *ContentManagementUseCase {
+	contentManagementUseCase := ContentManagementUseCase{repo, db}
 
 	return &contentManagementUseCase
 }
@@ -43,7 +46,7 @@ func (uc *ContentManagementUseCase) GetContentManagementDashboard(filter *dto.Ge
 }
 
 func (uc *ContentManagementUseCase) CreateContent(contentData *dto.CreateContentDTO) error {
-	tx := uc.repo.Db.Begin()
+	tx := uc.db.Begin()
 	_, err := uc.repo.CreateContent(contentData)
 
 	if err != nil {
@@ -59,7 +62,7 @@ func (uc *ContentManagementUseCase) CreateContent(contentData *dto.CreateContent
 }
 
 func (uc *ContentManagementUseCase) UpdateContent(contentData *dto.UpdateContentDTO) dto.CustomErrorInterface {
-	tx := uc.repo.Db.Begin()
+	tx := uc.db.Begin()
 	cm, findCmError := uc.repo.FindOneById(contentData.ContentManagementId)
 
 	if findCmError != nil {
@@ -85,7 +88,7 @@ func (uc *ContentManagementUseCase) UpdateContent(contentData *dto.UpdateContent
 }
 
 func (uc *ContentManagementUseCase) DeleteContent(contentId uint64) dto.CustomErrorInterface {
-	tx := uc.repo.Db.Begin()
+	tx := uc.db.Begin()
 	cm, findCmError := uc.repo.FindOneById(contentId)
 
 	if findCmError != nil {
@@ -114,7 +117,7 @@ func (uc *ContentManagementUseCase) DeleteContent(contentId uint64) dto.CustomEr
 
 func (uc *ContentManagementUseCase) PublishAndUpdateLink(data *dto.PublishAndUpdateLinkUseCaseInputDTO) dto.CustomErrorInterface {
 	// * initiate transaction
-	tx := uc.repo.Db.Begin()
+	tx := uc.db.Begin()
 
 	cm, findCmError := uc.repo.FindOneById(data.ContentManagementId)
 
@@ -153,7 +156,7 @@ func (uc *ContentManagementUseCase) PublishAndUpdateLink(data *dto.PublishAndUpd
 }
 
 func (uc *ContentManagementUseCase) UpdateContentStatusProgress(data *dto.UpdateContentStatusProgressUseCaseInputDTO) dto.CustomErrorInterface {
-	tx := uc.repo.Db.Begin()
+	tx := uc.db.Begin()
 
 	cm, findCmError := uc.repo.FindOneById(data.ContentManagementId)
 
