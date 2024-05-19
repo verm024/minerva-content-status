@@ -133,3 +133,26 @@ func (cont *ContentManagementController) PublishAndUpdateLink(c echo.Context) er
 
 	return helper_response.ResponseHandler(c, map[string]interface{}{})
 }
+
+func (cont *ContentManagementController) UpdateContentStatusProgress(c echo.Context) error {
+	req := dto.UpdateContentStatusProgressRequestDTO{}
+	bindErr := c.Bind(&req)
+
+	if bindErr != nil {
+		return helper_response.ErrorResponseHandler(c, bindErr, http.StatusBadRequest)
+	}
+
+	validateErr := validators.ValidateRequest(req)
+
+	if validateErr != nil {
+		return helper_response.ErrorResponseHandler(c, validateErr, http.StatusBadRequest)
+	}
+
+	err := cont.uc.UpdateContentStatusProgress(&dto.UpdateContentStatusProgressUseCaseInputDTO{Status: req.Status, ContentManagementId: req.ContentManagementId})
+
+	if err != nil {
+		return helper_response.ErrorResponseHandler(c, err, http.StatusBadRequest)
+	}
+
+	return helper_response.ResponseHandler(c, map[string]interface{}{})
+}

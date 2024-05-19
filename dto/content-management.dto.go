@@ -94,3 +94,17 @@ type DeleteCMRequestDTO struct {
 }
 
 // * END DELETE CONTENT
+
+// * START UPDATE STATUS PROGRESS
+type UpdateContentStatusProgressUseCaseInputDTO struct {
+	ContentManagementId uint64
+	Status              string
+}
+
+type UpdateContentStatusProgressRequestDTO struct {
+	ContentManagementId uint64 `param:"content_management_id" validate:"required"`
+	// ! status PUBLISHED is not allowed because it has its own endpoint
+	Status string `status:"ig_link" validate:"enum_validator=DRAFT WORKING_ON WAIT_PUBLISH"`
+}
+
+// * END UPDATE STATUS PROGRESS

@@ -24,8 +24,9 @@ func (r *contentManagementRouter) initialize() {
 	contentManagementRouter := r.e.Group("/content-management")
 	contentManagementRouter.Use(cm.appMiddleware)
 	contentManagementRouter.GET("", cont.GetContentManagementDashboard, cm.roleBasedRouteMiddleware([]string{"SA"}))
-	contentManagementRouter.POST("", cont.CreateContent)
-	contentManagementRouter.PUT("/:content_management_id", cont.UpdateContent)
-	contentManagementRouter.DELETE("/:content_management_id", cont.DeleteContent)
-	contentManagementRouter.PUT("/:content_management_id/publish", cont.PublishAndUpdateLink)
+	contentManagementRouter.POST("", cont.CreateContent, cm.roleBasedRouteMiddleware([]string{"SA"}))
+	contentManagementRouter.PUT("/:content_management_id", cont.UpdateContent, cm.roleBasedRouteMiddleware([]string{"SA"}))
+	contentManagementRouter.DELETE("/:content_management_id", cont.DeleteContent, cm.roleBasedRouteMiddleware([]string{"SA"}))
+	contentManagementRouter.PUT("/:content_management_id/publish", cont.PublishAndUpdateLink, cm.roleBasedRouteMiddleware([]string{"SA"}))
+	contentManagementRouter.PUT("/:content_management_id/status", cont.UpdateContentStatusProgress, cm.roleBasedRouteMiddleware([]string{"SA"}))
 }

@@ -13,6 +13,7 @@ type ContentManagementUseCaseInterface interface {
 	UpdateContent(contentData *dto.UpdateContentDTO) dto.CustomErrorInterface
 	DeleteContent(contentId uint64) dto.CustomErrorInterface
 	PublishAndUpdateLink(data *dto.PublishAndUpdateLinkUseCaseInputDTO) dto.CustomErrorInterface
+	UpdateContentStatusProgress(data *dto.UpdateContentStatusProgressUseCaseInputDTO) dto.CustomErrorInterface
 }
 
 type ContentManagementUseCase struct {
@@ -118,6 +119,7 @@ func (uc *ContentManagementUseCase) PublishAndUpdateLink(data *dto.PublishAndUpd
 	cm, findCmError := uc.repo.FindOneById(data.ContentManagementId)
 
 	if findCmError != nil {
+		tx.Rollback()
 		return findCmError
 	}
 
@@ -142,6 +144,33 @@ func (uc *ContentManagementUseCase) PublishAndUpdateLink(data *dto.PublishAndUpd
 	if updateLinkErr != nil {
 		tx.Rollback()
 		return updateLinkErr
+	}
+
+	if commitErr := tx.Commit().Error; commitErr != nil {
+		return commitErr
+	}
+	return nil
+}
+
+func (uc *ContentManagementUseCase) UpdateContentStatusProgress(data *dto.UpdateContentStatusProgressUseCaseInputDTO) dto.CustomErrorInterface {
+	tx := uc.repo.Db.Begin()
+
+	cm, findCmError := uc.repo.FindOneById(data.ContentManagementId)
+
+	if findCmError != nil {
+		tx.Rollback()
+		return findCmError
+	}
+
+	if cm.ContentManagementId != data.ContentManagementId {
+		tx.Rollback()
+		return dto.NewCustomError("content not found", http.StatusNotFound)
+	}
+
+	updateStatusErr := uc.repo.UpdateStatus(&dto.UpdateStatusRepoInputDTO{ContentManagementId: data.ContentManagementId, Status: data.Status})
+	if updateStatusErr != nil {
+		tx.Rollback()
+		return updateStatusErr
 	}
 
 	if commitErr := tx.Commit().Error; commitErr != nil {

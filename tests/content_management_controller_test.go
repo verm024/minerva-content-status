@@ -44,6 +44,11 @@ func (m *MockContentManagementUseCase) PublishAndUpdateLink(data *dto.PublishAnd
 	return args.Error(0)
 }
 
+func (m *MockContentManagementUseCase) UpdateContentStatusProgress(data *dto.UpdateContentStatusProgressUseCaseInputDTO) dto.CustomErrorInterface {
+	args := m.Called(data)
+	return args.Error(0)
+}
+
 func TestGetContentManagementDashboard(t *testing.T) {
 	const ENDPOINT_PATH string = "/content-management"
 	e := echo.New()
