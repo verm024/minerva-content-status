@@ -4,14 +4,15 @@ import (
 	"errors"
 	"minerva-content-status/dto"
 	"minerva-content-status/repository"
+	"net/http"
 )
 
 type ContentManagementUseCaseInterface interface {
 	GetContentManagementDashboard(filter *dto.GetContentManagementDashboardDTO) (*dto.GetContentManagementDashboardUseCaseOutputDTO, error)
 	CreateContent(contentData *dto.CreateContentDTO) error
-	UpdateContent(contentData *dto.UpdateContentDTO) error
-	DeleteContent(contentId uint64) error
-	PublishAndUpdateLink(data *dto.PublishAndUpdateLinkUseCaseInputDTO) error
+	UpdateContent(contentData *dto.UpdateContentDTO) dto.CustomErrorInterface
+	DeleteContent(contentId uint64) dto.CustomErrorInterface
+	PublishAndUpdateLink(data *dto.PublishAndUpdateLinkUseCaseInputDTO) dto.CustomErrorInterface
 }
 
 type ContentManagementUseCase struct {
@@ -56,7 +57,7 @@ func (uc *ContentManagementUseCase) CreateContent(contentData *dto.CreateContent
 	return nil
 }
 
-func (uc *ContentManagementUseCase) UpdateContent(contentData *dto.UpdateContentDTO) error {
+func (uc *ContentManagementUseCase) UpdateContent(contentData *dto.UpdateContentDTO) dto.CustomErrorInterface {
 	tx := uc.repo.Db.Begin()
 	cm, findCmError := uc.repo.FindOneById(contentData.ContentManagementId)
 
@@ -67,8 +68,7 @@ func (uc *ContentManagementUseCase) UpdateContent(contentData *dto.UpdateContent
 
 	if cm.ContentManagementId != contentData.ContentManagementId {
 		tx.Rollback()
-		// TODO: Handle not found error 404 response
-		return errors.New("content not found")
+		return dto.NewCustomError("content not found", http.StatusNotFound)
 	}
 
 	_, updateErr := uc.repo.UpdateContent(contentData)
@@ -83,7 +83,7 @@ func (uc *ContentManagementUseCase) UpdateContent(contentData *dto.UpdateContent
 	return updateErr
 }
 
-func (uc *ContentManagementUseCase) DeleteContent(contentId uint64) error {
+func (uc *ContentManagementUseCase) DeleteContent(contentId uint64) dto.CustomErrorInterface {
 	tx := uc.repo.Db.Begin()
 	cm, findCmError := uc.repo.FindOneById(contentId)
 
@@ -94,8 +94,7 @@ func (uc *ContentManagementUseCase) DeleteContent(contentId uint64) error {
 
 	if cm.ContentManagementId != contentId {
 		tx.Rollback()
-		// TODO: Handle not found error 404 response
-		return errors.New("content not found")
+		return dto.NewCustomError("content not found", http.StatusNotFound)
 	}
 
 	deleteErr := uc.repo.DeleteContent(contentId)
@@ -112,7 +111,7 @@ func (uc *ContentManagementUseCase) DeleteContent(contentId uint64) error {
 	return nil
 }
 
-func (uc *ContentManagementUseCase) PublishAndUpdateLink(data *dto.PublishAndUpdateLinkUseCaseInputDTO) error {
+func (uc *ContentManagementUseCase) PublishAndUpdateLink(data *dto.PublishAndUpdateLinkUseCaseInputDTO) dto.CustomErrorInterface {
 	// * initiate transaction
 	tx := uc.repo.Db.Begin()
 
@@ -123,9 +122,8 @@ func (uc *ContentManagementUseCase) PublishAndUpdateLink(data *dto.PublishAndUpd
 	}
 
 	if cm.ContentManagementId != data.ContentManagementId {
-		// TODO: Handle not found error 404 response
 		tx.Rollback()
-		return errors.New("content not found")
+		return dto.NewCustomError("content not found", http.StatusNotFound)
 	}
 
 	if cm.Status != "WAIT_PUBLISH" {

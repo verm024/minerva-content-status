@@ -19,8 +19,15 @@ func ResponseHandler(c echo.Context, data interface{}) error {
 	return c.JSON(http.StatusOK, mapResponse)
 }
 
-func ErrorResponseHandler(c echo.Context, err error, code int) error {
+func ErrorResponseHandler(c echo.Context, err dto.CustomErrorInterface, code int) error {
+	// * if the error is a custom error, it should has its own code
+	if customError, customErrOk := err.(*dto.CustomError); customErrOk {
+		err = customError
+		// * so set the code param as custom errors code
+		code = int(customError.Code)
+	}
 
+	// * but if the code is still undefined, then set the code as internal server error (unhandled)
 	if code == 0 {
 		code = http.StatusInternalServerError
 	}

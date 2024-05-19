@@ -28,19 +28,18 @@ func (m *MockContentManagementUseCase) CreateContent(contentData *dto.CreateCont
 	return args.Error(0)
 }
 
-func (m *MockContentManagementUseCase) UpdateContent(contentData *dto.UpdateContentDTO) error {
+func (m *MockContentManagementUseCase) UpdateContent(contentData *dto.UpdateContentDTO) dto.CustomErrorInterface {
 	args := m.Called(contentData)
 	return args.Error(0)
 }
 
-func (m *MockContentManagementUseCase) DeleteContent(contentId uint64) error {
+func (m *MockContentManagementUseCase) DeleteContent(contentId uint64) dto.CustomErrorInterface {
 
 	args := m.Called(contentId)
 	return args.Error(0)
 }
 
-func (m *MockContentManagementUseCase) PublishAndUpdateLink(data *dto.PublishAndUpdateLinkUseCaseInputDTO) error {
-
+func (m *MockContentManagementUseCase) PublishAndUpdateLink(data *dto.PublishAndUpdateLinkUseCaseInputDTO) dto.CustomErrorInterface {
 	args := m.Called(data)
 	return args.Error(0)
 }
