@@ -22,10 +22,13 @@ func (r *contentManagementArcRouter) initialize() {
 
 	cm := initializeCustomMiddleware(r.e)
 
-	contentManagementRouter := r.e.Group("/content-management-arc")
+	contentManagementRouter := r.e.Group("/content-management")
 	contentManagementRouter.Use(cm.appMiddleware)
-	contentManagementRouter.POST("/create/:content_management_id", cont.CreateCMArc, cm.roleBasedRouteMiddleware([]string{"SA"}))
-	contentManagementRouter.PUT("/:content_management_arc_id", cont.UpdateCMArc, cm.roleBasedRouteMiddleware([]string{"SA"}))
-	contentManagementRouter.DELETE("/:content_management_arc_id", cont.DeleteCMArc, cm.roleBasedRouteMiddleware([]string{"SA"}))
-	contentManagementRouter.GET("/list/:content_management_id", cont.CMArcListByCMId, cm.roleBasedRouteMiddleware([]string{"SA"}))
+	contentManagementRouter.POST("/:content_management_id/content-management-arc", cont.CreateCMArc, cm.roleBasedRouteMiddleware([]string{"SA"}))
+	contentManagementRouter.GET("/:content_management_id/content-management-arc", cont.CMArcListByCMId, cm.roleBasedRouteMiddleware([]string{"SA"}))
+
+	contentManagementArcRouter := r.e.Group("/content-management-arc")
+	contentManagementArcRouter.Use(cm.appMiddleware)
+	contentManagementArcRouter.PUT("/:content_management_arc_id", cont.UpdateCMArc, cm.roleBasedRouteMiddleware([]string{"SA"}))
+	contentManagementArcRouter.DELETE("/:content_management_arc_id", cont.DeleteCMArc, cm.roleBasedRouteMiddleware([]string{"SA"}))
 }

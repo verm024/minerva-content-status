@@ -17,5 +17,4 @@ func Initialize(e *echo.Echo, db *gorm.DB) {
 
 	userRouter := userRouter{e, db}
 	userRouter.initialize()
-
 }
