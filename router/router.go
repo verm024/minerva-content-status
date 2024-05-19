@@ -15,6 +15,9 @@ func Initialize(e *echo.Echo, db *gorm.DB) {
 	contentManagementArcRouter := contentManagementArcRouter{e, db}
 	contentManagementArcRouter.initialize()
 
+	contentManagementArcScriptRouter := contentManagementArcScriptRouter{e, db}
+	contentManagementArcScriptRouter.initialize()
+
 	userRouter := userRouter{e, db}
 	userRouter.initialize()
 }

@@ -25,6 +25,6 @@ func Connect() (*gorm.DB, error) {
 		return nil, err
 	}
 	log.Println("Success connecting to database")
-	db.AutoMigrate(&models.User{}, &models.ContentManagementArc{}, &models.ContentManagement{})
+	db.AutoMigrate(&models.User{}, &models.ContentManagementArc{}, &models.ContentManagement{}, &models.ContentManagementArcScript{})
 	return db, nil
 }

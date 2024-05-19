@@ -9,10 +9,10 @@ import (
 )
 
 type ContentManagementArcUseCaseInterface interface {
-	CreateCMArc(data *dto.CreateCMArcUseCaseInputDTO) error
+	CreateCMArc(data *dto.CreateCMArcUseCaseInputDTO) dto.CustomErrorInterface
 	UpdateCMArc(data *dto.UpdateCmArcUseCaseInputDTO) dto.CustomErrorInterface
-	DeleteCMArc(arcId uint64) error
-	CMArcListByCMId(cmId uint64) (*dto.CMArcListByCMIdUseCaseOutputDTO, error)
+	DeleteCMArc(arcId uint64) dto.CustomErrorInterface
+	CMArcListByCMId(cmId uint64) (*dto.CMArcListByCMIdUseCaseOutputDTO, dto.CustomErrorInterface)
 }
 
 type ContentManagementArcUseCase struct {
@@ -26,9 +26,19 @@ func InitializeContentManagementArcUseCase(repo repository.ContentManagementArcR
 	return &uc
 }
 
-func (uc *ContentManagementArcUseCase) CreateCMArc(data *dto.CreateCMArcUseCaseInputDTO) error {
+func (uc *ContentManagementArcUseCase) CreateCMArc(data *dto.CreateCMArcUseCaseInputDTO) dto.CustomErrorInterface {
 
 	tx := uc.db.Begin()
+
+	oneCmRepo, cmRepoFindError := uc.cmrepo.FindOneById(data.ContentManagementId)
+	if cmRepoFindError != nil {
+		return cmRepoFindError
+	}
+
+	if oneCmRepo.ContentManagementId != data.ContentManagementId {
+		return dto.NewCustomError("content management arc not found", http.StatusNotFound)
+	}
+
 	_, err := uc.repo.CreateCMArc(&dto.CreateCMArcRepoInputDTO{Title: data.Title, Description: data.Description, ContentManagementId: data.ContentManagementId})
 
 	if err != nil {
@@ -71,7 +81,7 @@ func (uc *ContentManagementArcUseCase) UpdateCMArc(data *dto.UpdateCmArcUseCaseI
 	return nil
 }
 
-func (uc *ContentManagementArcUseCase) DeleteCMArc(arcId uint64) error {
+func (uc *ContentManagementArcUseCase) DeleteCMArc(arcId uint64) dto.CustomErrorInterface {
 	tx := uc.db.Begin()
 
 	oneCmArc, findOneErr := uc.repo.GetById(arcId)
@@ -100,7 +110,7 @@ func (uc *ContentManagementArcUseCase) DeleteCMArc(arcId uint64) error {
 	return nil
 }
 
-func (uc *ContentManagementArcUseCase) CMArcListByCMId(cmId uint64) (*dto.CMArcListByCMIdUseCaseOutputDTO, error) {
+func (uc *ContentManagementArcUseCase) CMArcListByCMId(cmId uint64) (*dto.CMArcListByCMIdUseCaseOutputDTO, dto.CustomErrorInterface) {
 	// * validate the existence of content management id
 	oneCmRepo, cmRepoFindError := uc.cmrepo.FindOneById(cmId)
 	if cmRepoFindError != nil {
